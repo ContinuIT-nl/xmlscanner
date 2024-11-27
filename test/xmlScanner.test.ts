@@ -65,14 +65,18 @@ Deno.test('xml-declaration', () => {
   for (const version of ['1.0', '1.1', '']) {
     for (const encoding of ['UTF-8', 'UTF-16', 'ISO-8859-1', '']) {
       for (const standalone of ['yes', 'no', '']) {
-        const xml1 = `<?xml ${version ? `version="${version}"` : ''}${encoding ? ` encoding="${encoding}"` : ''}${standalone ? ` standalone="${standalone}"` : ''} ?><a/>`;
-        xmlScanner(xml1, { xmlDeclaration: (_version, _encoding, _standalone) => {}});
-        const xml2 = `<?xml ${version ? `version='${version}'` : ''}${encoding ? ` encoding='${encoding}'` : ''}${standalone ? ` standalone='${standalone}'` : ''} ?><a/>`;
-        xmlScanner(xml2, { xmlDeclaration: (_version, _encoding, _standalone) => {}});
+        const xml1 = `<?xml ${version ? `version="${version}"` : ''}${encoding ? ` encoding="${encoding}"` : ''}${
+          standalone ? ` standalone="${standalone}"` : ''
+        } ?><a/>`;
+        xmlScanner(xml1, { xmlDeclaration: (_version, _encoding, _standalone) => {} });
+        const xml2 = `<?xml ${version ? `version='${version}'` : ''}${encoding ? ` encoding='${encoding}'` : ''}${
+          standalone ? ` standalone='${standalone}'` : ''
+        } ?><a/>`;
+        xmlScanner(xml2, { xmlDeclaration: (_version, _encoding, _standalone) => {} });
       }
     }
   }
-}); 
+});
 
 Deno.test('comment', () => {
   const xml = '<!-- comment --><a/>';
@@ -124,7 +128,6 @@ Deno.test('invalid-xml-invalid-element-name', () => {
   assertThrows(() => xmlScanner(xml, {}));
 });
 
-
 Deno.test('invalid-xml-unmatched-tag', () => {
   // Unmatched tag
   const xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><a></b>';
@@ -135,7 +138,6 @@ Deno.test('invalid-xml-unquoted-attribute', () => {
   const xml = '<a b=c/>';
   assertThrows(() => xmlScanner(xml, {}));
 });
-
 
 Deno.test('invalid-xml-unclosed-attribute', () => {
   // Unclosed attribute
