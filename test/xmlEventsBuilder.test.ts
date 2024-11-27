@@ -49,11 +49,16 @@ Deno.test('xmlEventBuilder-specials', () => {
   addElement(events, 'a').text = (text) => {
     result.push(`Text [a] [${text}]`);
   };
-  events.xmlDeclaration = () => { 
+  events.xmlDeclaration = () => {
     result.push('XML Declaration');
   };
   xmlScanner(sql, events);
 
-  const expected = ['XML Declaration', 'Tagopen [a]', 'Attribute [href] [bcd]', 'Text [a] [abc]'];
+  const expected = [
+    'XML Declaration',
+    'Tagopen [a]',
+    'Attribute [href] [bcd]',
+    'Text [a] [abc]',
+  ];
   assertEquals(result, expected);
 });

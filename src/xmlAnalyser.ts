@@ -1,7 +1,18 @@
 import { xmlScanner } from './xmlScanner.ts';
 import type { XmlEvents } from './xmlScannerTypes.ts';
 
-export const xmlAnalyser = (xml: string) => {
+/**
+ * Analyzes the given XML string and returns a sorted array of unique paths and elements found within the XML.
+ * The paths include tags, attributes, text content, CDATA sections, processing instructions, and comments.
+ *
+ * The main use case is for analysis of the XML structure and quick creation of correct xml event tries for scanning XML strings.
+ * If you find employees/employee/name#text you can set a path of employees/employee and define a text event on that path.
+ *
+ * @param xml - The XML string to analyze.
+ * @returns A sorted array of unique paths and elements found within the XML.
+ */
+
+export const xmlAnalyser = (xml: string): string[] => {
   const result = new Set<string>();
   const path: string[] = [''];
   const events: XmlEvents = {

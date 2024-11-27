@@ -3,9 +3,9 @@ const ENTITY_END = ';';
 
 /**
  * Decodes XML entities in a string.
+ * If an invalid entity is encountered it is left unchanged in the result
  * @param value The string containing XML entities to decode.
  * @returns The decoded string.
- * @throws {XmlParsingError} If an invalid entity is encountered. TODO: not yet
  */
 export const unEntity = (value: string): string => {
   // Start of the entity
@@ -35,7 +35,11 @@ const decodeNumericEntity = (entity: string): string => {
 };
 
 // Process all entities. We know there is at least one.
-const unEntityInner = (value: string, entityStart: number, entityEnd: number): string => {
+const unEntityInner = (
+  value: string,
+  entityStart: number,
+  entityEnd: number,
+): string => {
   const result: string[] = entityStart > 0 ? [value.slice(0, entityStart)] : [];
   for (;;) {
     const entity = value.substring(entityStart + 1, entityEnd);

@@ -1,5 +1,3 @@
-import { XmlErrorMessages } from './xmlScannerConstants.ts';
-
 /**
  * Event triggered when an XML tag is opened.
  * @param name The name of the opened tag.
@@ -50,7 +48,11 @@ export type CommentEvent = (text: string) => void;
  * @param encoding The encoding of the XML document.
  * @param standalone The standalone declaration.
  */
-export type XmlDeclarationEvent = (version: string, encoding: string, standalone: string) => void;
+export type XmlDeclarationEvent = (
+  version: string,
+  encoding: string,
+  standalone: string,
+) => void;
 
 /**
  * Event triggered when a DOCTYPE declaration is encountered.
@@ -59,7 +61,11 @@ export type XmlDeclarationEvent = (version: string, encoding: string, standalone
  * @param publicId The public identifier.
  * @param systemId The system identifier.
  */
-export type XmlDocTypeEvent = (name: string, publicId: string, systemId: string) => void;
+export type XmlDocTypeEvent = (
+  name: string,
+  publicId: string,
+  systemId: string,
+) => void;
 
 /**
  * Event triggered when an unknown attribute is encountered.
@@ -101,5 +107,3 @@ export type XmlEvents = {
    */
   attributes?: { [key: string]: AttributeEvent };
 };
-
-export type XmlParsingErrorCode = keyof typeof XmlErrorMessages;
