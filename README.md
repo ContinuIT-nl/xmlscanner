@@ -11,10 +11,12 @@ There are two basic types of XML parsers:
 - SAX (event based)
 - DOM (tree based)
 
-This library implements a SAX parser on steroids thus giving a bit of the ease of use of the DOM parsers while still allowing for the speed of SAX parsers. The XMl scanner allow for scanning XML strings (steams are not supported (yet)).
+This library implements a SAX parser on steroids thus giving a bit of the ease of use of the DOM parsers while still allowing for the speed of SAX parsers. The XML scanner allows for scanning XML strings. Streaming is not supported (yet).
 
 The xml scanner is built around the concept of events and paths.
-There are several types of events (like open tag, close tag, text, comment etc.) and paths which are used to define on which document elements the events need to be invoked.
+There are several types of events (like open tag, close tag, text, comment etc.) each fired when the scanner encounters the corresponding part of the XML document.
+Paths which are used to define on which document elements the events need to be invoked. The paths are similar to the XPath absolute path expressions.
+An event trie can be filled with events that need to be invoked on specific paths. Once defined it can be used to scan XML strings.
 
 ## Basic usage
 
@@ -117,11 +119,17 @@ async function extractEmployees(xml: string): Employee[] {
 
 The xml scanner is designed to be as fast as possible.
 
-Care has been taken to ensure that the library performs well. First of all: we tried out different approaches to fast parsing the XML string. After doing analysis we used the two basic fast string operations are `indexOf` and `charCodeAt`.
+Care has been taken to ensure that the library performs well. First of all: we tried out different approaches to fast parsing of the XML string. After doing analysis we used the two basic fast string operations are `indexOf` and `charCodeAt`.
 
-In order to allow for event to be defined on different paths, we use a trie structure. This tree is traversed while scanning the XML string so when events need to be invoked the right node is already at hand. Since all events are defined on the nodes the memory usage is minimal while scanning the XML document is just following the trie structure so event invoking is very fast.
+In order to allow for events to be defined on different paths, we use a trie structure. 
+This treelike structure is traversed while scanning the XML string so when events need to be invoked the right node is already at hand.
+Since all events are defined on the nodes the memory usage is minimal. 
+While scanning the XML document we keep track of where the equivalent trie node is so event invoking is also very fast.
 
-No tokens are created while scanning. When an event is specified on a path that need to pass some content (like text and attribute events) only then is the content extracted and entities unescaped. Since V8 and the like allow for allocation of substrings very fast there is only a minimal penalty in terms of performance, especially if there are no entities to unescape. This is the reason we used a string as the source of the XML document instead of an UInt8Array.
+No tokens are created while scanning, just scanning the XML string. 
+When an event is specified on a path that need to pass some content (like text and attribute events) only then is the content extracted and entities unescaped. 
+Since V8 and the like allow for allocation of substrings very fast there is only a minimal penalty in terms of performance, especially if there are no entities to unescape. 
+This is the reason we used a string as the source of the XML document instead of an `UInt8Array`.
 
 ## Caveats
 
@@ -129,11 +137,11 @@ No tokens are created while scanning. When an event is specified on a path that 
 
 The xml scanner currently does not support all XML features. Namespaces are not parsed, so if you have namespaces in your XML, you will need to handle those yourself.
 
-````xml
+```xml
 <root xmlns:x="http://example.com/namespace">
   <x:child>text</x:child>
 </root>
-```	
+```
 
 In the above case the path `root/x:child` will be matched, but if the namespace name is changed from `x` to `y`, the path `root/y:child` will not be matched.
 
@@ -143,5 +151,16 @@ The xml scanner does not support DTDs. If you have DTDs in your XML, a not suppo
 
 ### Streaming
 
-The xml scanner does not support streaming. The entire XML document must be present in a string  will be scanned in one go before the result is returned.
-````
+The xml scanner does not support streaming. The entire XML document must be present in a string before it can be scanned.
+
+## Why another XML parser?
+
+There are already a number of XML parsers available for Typescript, so why build another one.
+
+The main reason is that I needed a fast XML parser for XML files wrapped inside zip files varying in size from 30MB to 200MB.
+We did not find a solution that would be both performant and easy to use (and not run out of memory).
+
+## License
+
+This project is licensed under the MIT license. See the [LICENSE](./LICENSE) file for details.
+
