@@ -32,8 +32,7 @@ jobs:
         run: deno check ./src/mod.ts
 
       - name: Run tests
-        run: deno test -R --coverage 
+        run: deno test -R --coverage
 
       - name: Convert coverage to lcov
         run: deno coverage --lcov --output cov.lcov
-

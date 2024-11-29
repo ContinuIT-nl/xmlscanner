@@ -121,14 +121,14 @@ The xml scanner is designed to be as fast as possible.
 
 Care has been taken to ensure that the library performs well. First of all: we tried out different approaches to fast parsing of the XML string. After doing analysis we used the two basic fast string operations are `indexOf` and `charCodeAt`.
 
-In order to allow for events to be defined on different paths, we use a trie structure. 
+In order to allow for events to be defined on different paths, we use a trie structure.
 This treelike structure is traversed while scanning the XML string so when events need to be invoked the right node is already at hand.
-Since all events are defined on the nodes the memory usage is minimal. 
+Since all events are defined on the nodes the memory usage is minimal.
 While scanning the XML document we keep track of where the equivalent trie node is so event invoking is also very fast.
 
-No tokens are created while scanning, just scanning the XML string. 
-When an event is specified on a path that need to pass some content (like text and attribute events) only then is the content extracted and entities unescaped. 
-Since V8 and the like allow for allocation of substrings very fast there is only a minimal penalty in terms of performance, especially if there are no entities to unescape. 
+No tokens are created while scanning, just scanning the XML string.
+When an event is specified on a path that need to pass some content (like text and attribute events) only then is the content extracted and entities unescaped.
+Since V8 and the like allow for allocation of substrings very fast there is only a minimal penalty in terms of performance, especially if there are no entities to unescape.
 This is the reason we used a string as the source of the XML document instead of an `UInt8Array`.
 
 ## Caveats
@@ -163,4 +163,3 @@ We did not find a solution that would be both performant and easy to use (and no
 ## License
 
 This project is licensed under the MIT license. See the [LICENSE](./LICENSE) file for details.
-
