@@ -1,5 +1,7 @@
 # xmlscanner
 
+[![ci](https://github.com/ContinuIT-nl/xmlscanner/actions/workflows/ci.yml/badge.svg)](https://github.com/ContinuIT-nl/xmlscanner/actions/workflows/ci.yml)
+
 A fast XML parser / scanner written in Typescript
 
 Given an XML string, the xml scanner will parse the XML and invoke the defined events on the specified paths.
