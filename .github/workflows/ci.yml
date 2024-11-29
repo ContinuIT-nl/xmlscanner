@@ -1,12 +1,4 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-# This workflow will install Deno then run `deno lint` and `deno test`.
-# For more information see: https://github.com/denoland/setup-deno
-
-name: Deno
+name: Deno CI
 
 on:
   push:
@@ -36,5 +28,12 @@ jobs:
       - name: Run linter
         run: deno lint
 
+      - name: Type check
+        run: deno check ./src/mod.ts
+
       - name: Run tests
-        run: deno test -R
+        run: deno test -R --coverage 
+
+      - name: Convert coverage to lcov
+        run: deno coverage --lcov --output cov.lcov
+
