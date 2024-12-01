@@ -39,10 +39,10 @@ Deno.test('xmlScanner-events', () => {
   assertEquals(result, expected);
 });
 
-const Count = 1000;
+const Count = 10000;
 
 Deno.test('xmlScanner-performance', async () => {
-  const xmlBytes = await Deno.readFile('./test/testfile.xml');
+  const xmlBytes = await Deno.readFile('./test_data/testfile.xml');
   const xmlText = new TextDecoder('utf-8').decode(xmlBytes);
 
   const start = performance.now();
@@ -54,7 +54,7 @@ Deno.test('xmlScanner-performance', async () => {
   const mb_per_second = Math.round(
     (xmlBytes.byteLength * 1000 / duration_ms) / 1024 / 1024,
   );
-  assertGreater(mb_per_second, 30);
+  assertGreater(mb_per_second, 100);
   console.log(
     `>>> Scanning dummy XML took ${duration_ms * 1e6} ns/run (${mb_per_second} MB/s)`,
   );

@@ -71,17 +71,17 @@ const parseElement = (xml: string, start: number, events: XmlEvents) => {
   lEvents.tagopen?.(tagName);
 
   // Attributes loop
-  let index = nameEnd;
+  let attrNameStart = nameEnd;
   for (;;) {
     // Find start of attribute name or end of the opening tag.
-    let attrNameStart = index;
-    while (
-      whitespaceBits[xml.charCodeAt(attrNameStart) >> 5] &
-      (1 << (xml.charCodeAt(attrNameStart) & 31))
-    ) attrNameStart++;
+    let charCode = xml.charCodeAt(attrNameStart);
+    while (whitespaceBits[charCode >> 5] & (1 << (charCode & 31))) {
+      attrNameStart++;
+      charCode = xml.charCodeAt(attrNameStart);
+    }
 
     // End of open tag
-    if (xml.charCodeAt(attrNameStart) === 62) { // 62 = '>'
+    if (charCode === 62) { // 62 = '>'
       // content loop
       let contentStart = attrNameStart + 1;
       // todo: check performance implications for creating another function for this
@@ -126,47 +126,48 @@ const parseElement = (xml: string, start: number, events: XmlEvents) => {
     }
 
     // Self closing tag
-    if (xml[attrNameStart] === '/' && xml[attrNameStart + 1] === '>') {
+    if (charCode === 47 && xml.charCodeAt(attrNameStart + 1) === 62) { // 47 = '/', 62 = '>'
       lEvents.tagclose?.(tagName);
       return attrNameStart + 2;
     }
 
     // Scan attribute name.
-    const charCode = xml.charCodeAt(attrNameStart);
     if (!(validNameStartBits[charCode >> 5] & (1 << (charCode & 31)))) {
       throw new XmlParsingError('INVALID_ATTRIBUTE_NAME', start);
     }
     let attrNameEnd = attrNameStart + 1;
     for (;;) {
-      const charCode = xml.charCodeAt(attrNameEnd);
+      charCode = xml.charCodeAt(attrNameEnd);
       if (!(validNameNextBits[charCode >> 5] & (1 << (charCode & 31)))) break;
       attrNameEnd++;
     }
-    const attrName = xml.slice(attrNameStart, attrNameEnd);
 
     // Attribute value parsing
-    if (xml.charCodeAt(attrNameEnd) !== 61) {
+    // equal sign
+    if (charCode !== 61) {
       throw new XmlParsingError('UNEXPECTED_TOKEN', attrNameEnd); // 61 = '='
     }
-    const quoteChar = xml.charCodeAt(attrNameEnd + 1);
-    if (!(quoteChar === 34 || quoteChar === 39)) {
+    // quote character
+    charCode = xml.charCodeAt(attrNameEnd + 1);
+    if (!(charCode === 34 || charCode === 39)) {
       throw new XmlParsingError('UNEXPECTED_TOKEN', attrNameEnd + 1); // 34 = '"', 39 = "'"
     }
-    const attrValueEnd = xml.indexOf(
-      quoteChar === 34 ? '"' : "'",
-      attrNameEnd + 2,
-    );
+    // attribute value end
+    const attrValueEnd = xml.indexOf(charCode === 34 ? '"' : "'", attrNameEnd + 2);
     if (attrValueEnd === -1) {
       throw new XmlParsingError('ATTRIBUTE_VALUE_NOT_CLOSED', attrNameEnd + 2);
     }
-    const attrValue = xml.slice(attrNameEnd + 2, attrValueEnd);
-
+    
     // Emit attribute event
-    lEvents.allAttributes?.(attrName, attrValue);
-    lEvents.attributes?.[attrName]?.(unEntity(attrValue));
+    const attrName = xml.slice(attrNameStart, attrNameEnd);
+    if (lEvents.allAttributes || lEvents.attributes?.[attrName]) {
+      const attrValue = xml.slice(attrNameEnd + 2, attrValueEnd);
+      lEvents.allAttributes?.(attrName, attrValue);
+      lEvents.attributes?.[attrName]?.(unEntity(attrValue));
+    }
 
     // Next attributes
-    index = attrValueEnd + 1;
+    attrNameStart = attrValueEnd + 1;
   }
 };
 

@@ -1,11 +1,22 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@libs/typing@^3.1.2": "3.1.2",
+    "jsr:@libs/xml@*": "6.0.2",
     "jsr:@std/assert@*": "1.0.8",
     "jsr:@std/assert@^1.0.8": "1.0.8",
     "jsr:@std/internal@^1.0.5": "1.0.5"
   },
   "jsr": {
+    "@libs/typing@3.1.2": {
+      "integrity": "72342a0eaedcc1f3f3ec18f8f9573759011c68f135e2ec6c7282c59843f7a37e"
+    },
+    "@libs/xml@6.0.2": {
+      "integrity": "317ee0c34acb9ce68ac4a0de0b456eb90f826c8ebd06bbe6e836d6516bff4850",
+      "dependencies": [
+        "jsr:@libs/typing"
+      ]
+    },
     "@std/assert@1.0.8": {
       "integrity": "ebe0bd7eb488ee39686f77003992f389a06c3da1bbd8022184804852b2fa641b",
       "dependencies": [
