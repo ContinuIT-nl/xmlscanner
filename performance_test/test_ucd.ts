@@ -20,6 +20,15 @@ async function loadUcdData(): Promise<[string, number]> {
   return [xmlFile, xmlFileBytes.byteLength];
 }
 
+let currentMem: Deno.MemoryUsage = Deno.memoryUsage();
+
+function getMemoryExtra() {
+  const mem = Deno.memoryUsage();
+  const extra = mem.heapUsed - currentMem.heapUsed;
+  currentMem = mem;
+  return extra;
+}
+
 async function perform_tests() {
   // Load the XML file into memory
   const start = performance.now();
@@ -32,19 +41,32 @@ async function perform_tests() {
   const results: Result[] = [];
 
   // Parse the XML file with the xmlScanner
-  results.push(perform_xmlscanner_test(xmlFile));
+  for (let i = 0; i < 10; i++) {
+    getMemoryExtra();
+    results.push(perform_xmlscanner_test(xmlFile));
+  }
 
   // Parse the XML file with @libs/xml
+  getMemoryExtra();
   results.push(perform_libs_xml_test(xmlFile));
+
+  getMemoryExtra();
 
   const resultData = results.map((r) => ({
     source: r.source,
     duration_ms: r.duration_ms.toFixed(2),
     speed_MBps: (fileSize_MB / r.duration_ms * 1000).toFixed(2),
+    memUsage_MB: r.memUsage_MB,
   }));
 
-  console.table(resultData);
-  
+  // Emit result
+  console.log(`${'Source'.padEnd(30)} | ${'Duration'.padStart(10)} ms | ${'Speed'.padStart(10)} MB/s | ${'Mem'.padStart(10)} MB`);
+  console.log(
+    resultData.map((r) =>
+      `${r.source.padEnd(30)} | ${r.duration_ms.padStart(10)} ms | ${r.speed_MBps.padStart(10)} MB/s | ${r.memUsage_MB.toFixed(2).padStart(10)} MB`
+    ).join('\n'),
+  );
+
   // ------------------------------------------------------------------------------------------------
   // Emit a small sample of the results
   // ------------------------------------------------------------------------------------------------
@@ -68,7 +90,7 @@ function perform_xmlscanner_test(xmlFile: string) {
   xmlScanner(xmlFile, events);
   const end = performance.now();
   const duration_ms = end - start;
-  return { source: 'xmlScanner', codePoints, duration_ms };
+  return { source: 'xmlScanner', codePoints, duration_ms, memUsage_MB: getMemoryExtra() / 1024 / 1024 };
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -86,7 +108,7 @@ function perform_libs_xml_test(xmlFile: string) {
   // Extract the code points from the result
   // const codePoints = Object.entries(_result.ucd.repertoire).map(([cp, data]) => ({ cp: cp, name: data.na }));
 
-  return { source: '@libs/xml', codePoints, duration_ms };
+  return { source: '@libs/xml', codePoints, duration_ms, memUsage_MB: getMemoryExtra() / 1024 / 1024 };
 }
 
 await perform_tests();

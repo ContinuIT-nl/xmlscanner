@@ -7,4 +7,5 @@ export type Result = {
   source: string;
   codePoints: CodePoint[];
   duration_ms: number;
+  memUsage_MB: number;
 };
