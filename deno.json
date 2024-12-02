@@ -6,7 +6,9 @@
   "license": "MIT",
   "author": "ContinuIT BV, The Netherlands",
   "tasks": {
-    "testucd": "deno run -A ./performance_test/test_ucd.ts"
+    "testucd": "deno run -A ./performance_test/test_ucd.ts",
+    "build-npm": "npx esbuild --bundle src/mod.ts --outfile=dist/index.js --minify --sourcemap",
+    "publish-npm": "npm publish --access public"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.8"

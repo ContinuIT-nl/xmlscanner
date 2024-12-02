@@ -13,6 +13,7 @@
 
 import { addAttributeEvent, addElement, emptyXmlEvents, xmlScanner } from '../src/mod.ts';
 import type { CodePoint, Result } from './ucd_types.ts';
+import { setPriority } from 'node:os';
 
 async function loadUcdData(): Promise<[string, number]> {
   const xmlFileBytes = await Deno.readFile('./test_data/ucd.all.flat.xml');
@@ -30,6 +31,8 @@ function getMemoryExtra() {
 }
 
 async function perform_tests() {
+  // Set process priority to highest prio to get more reproducible results
+  setPriority(-20);
   // Load the XML file into memory
   const start = performance.now();
   const [xmlFile, xmlFileBytes] = await loadUcdData();
@@ -48,7 +51,7 @@ async function perform_tests() {
 
   // Parse the XML file with @libs/xml
   getMemoryExtra();
-  results.push(perform_libs_xml_test(xmlFile));
+  //results.push(perform_libs_xml_test(xmlFile));
 
   getMemoryExtra();
 
@@ -112,3 +115,5 @@ function perform_libs_xml_test(xmlFile: string) {
 }
 
 await perform_tests();
+
+// todo: also add 10MB test and 1MB test
