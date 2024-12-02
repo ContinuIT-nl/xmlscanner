@@ -109,10 +109,11 @@ const parseElement = (xml: string, start: number, events: XmlEvents) => {
           // note: this is the only escape from the content loop.
           return contentEnd + 2 + tagName.length + 1;
         }
-        contentStart = 
-          nextCode === 63 /* ? */ ? parsePIorXmlDeclaration(xml, contentEnd, lEvents) : 
-          nextCode === 33 /* ! */ ? parseCommentOrDocTypeOrCData(xml, contentEnd, lEvents, true) : 
-          parseElement(xml, contentEnd, lEvents);
+        contentStart = nextCode === 63 /* ? */
+          ? parsePIorXmlDeclaration(xml, contentEnd, lEvents)
+          : nextCode === 33 /* ! */
+          ? parseCommentOrDocTypeOrCData(xml, contentEnd, lEvents, true)
+          : parseElement(xml, contentEnd, lEvents);
       }
     }
 
@@ -151,7 +152,7 @@ const parseElement = (xml: string, start: number, events: XmlEvents) => {
 
     // Emit attribute events
     const attrName = xml.slice(attrNameStart, attrNameEnd);
-    const attrEvent = lEvents.attributes?.[attrName]; 
+    const attrEvent = lEvents.attributes?.[attrName];
     if (lEvents.allAttributes || attrEvent) {
       const attrValue = unEntity(xml.slice(attrNameEnd + 2, attrValueEnd));
       lEvents.allAttributes?.(attrName, attrValue);

@@ -51,7 +51,7 @@ async function perform_tests() {
 
   // Parse the XML file with @libs/xml
   getMemoryExtra();
-  //results.push(perform_libs_xml_test(xmlFile));
+  results.push(perform_libs_xml_test(xmlFile));
 
   getMemoryExtra();
 
@@ -63,10 +63,14 @@ async function perform_tests() {
   }));
 
   // Emit result
-  console.log(`${'Source'.padEnd(30)} | ${'Duration'.padStart(10)} ms | ${'Speed'.padStart(10)} MB/s | ${'Mem'.padStart(10)} MB`);
+  console.log(
+    `${'Source'.padEnd(30)} | ${'Duration'.padStart(10)} ms | ${'Speed'.padStart(10)} MB/s | ${'Mem'.padStart(10)} MB`,
+  );
   console.log(
     resultData.map((r) =>
-      `${r.source.padEnd(30)} | ${r.duration_ms.padStart(10)} ms | ${r.speed_MBps.padStart(10)} MB/s | ${r.memUsage_MB.toFixed(2).padStart(10)} MB`
+      `${r.source.padEnd(30)} | ${r.duration_ms.padStart(10)} ms | ${r.speed_MBps.padStart(10)} MB/s | ${
+        r.memUsage_MB.toFixed(2).padStart(10)
+      } MB`
     ).join('\n'),
   );
 
