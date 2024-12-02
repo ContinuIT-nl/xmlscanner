@@ -1,5 +1,4 @@
 import { assertEquals, assertGreater, assertThrows } from 'jsr:@std/assert';
-import { xmlAnalyser } from '../src/xmlAnalyser.ts';
 import { xmlScanner } from '../src/xmlScanner.ts';
 import type { XmlEvents } from '../src/xmlScannerTypes.ts';
 
@@ -42,7 +41,8 @@ Deno.test('xmlScanner-events', () => {
 const Count = 1000;
 
 Deno.test('xmlScanner-performance', async () => {
-  const xmlBytes = await Deno.readFile('./test/testfile.xml');
+  // Load the XML file into memory
+  const xmlBytes = await Deno.readFile('./test_data/testfile.xml');
   const xmlText = new TextDecoder('utf-8').decode(xmlBytes);
 
   const start = performance.now();
@@ -50,15 +50,12 @@ Deno.test('xmlScanner-performance', async () => {
     xmlScanner(xmlText, {});
   }
   const end = performance.now();
-  const duration_ms = Math.round(end - start) / Count;
-  const mb_per_second = Math.round(
-    (xmlBytes.byteLength * 1000 / duration_ms) / 1024 / 1024,
-  );
-  assertGreater(mb_per_second, 30);
+  const duration_ms = (end - start) / Count;
+  const speed_MBps = Math.round((xmlBytes.byteLength * 1000 / duration_ms) / (1 << 20));
+  assertGreater(speed_MBps, 50);
   console.log(
-    `>>> Scanning dummy XML took ${duration_ms * 1e6} ns/run (${mb_per_second} MB/s)`,
+    `>>> Scanning dummy XML took ${duration_ms * 1e3} us/run (${speed_MBps} MB/s)`,
   );
-  xmlAnalyser(xmlText);
 });
 
 Deno.test('xml-declaration', () => {

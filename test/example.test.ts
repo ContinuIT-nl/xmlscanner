@@ -2,7 +2,7 @@ import { assertEquals } from 'jsr:@std/assert';
 import { xmlScanner } from '../src/xmlScanner.ts';
 import { addElement, emptyXmlEvents } from '../src/xmlEventsBuilder.ts';
 
-const xml = await Deno.readTextFile('./test/testfile.xml');
+const xml = await Deno.readTextFile('./test_data/testfile.xml');
 
 Deno.test('example_names_only', () => {
   const events = emptyXmlEvents();

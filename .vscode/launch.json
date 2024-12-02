@@ -33,6 +33,21 @@
         "--allow-all"
       ],
       "attachSimplePort": 9229
+    },
+    {
+      "request": "launch",
+      "name": "UCD performance test",
+      "type": "node",
+      "program": "${workspaceFolder}/performance_test/test_ucd.ts",
+      "cwd": "${workspaceFolder}",
+      "env": {},
+      "runtimeExecutable": "deno.exe",
+      "runtimeArgs": [
+        "run",
+        "--inspect-wait",
+        "--allow-all"
+      ],
+      "attachSimplePort": 9229
     }
   ]
 }

@@ -1,10 +1,21 @@
 # xmlscanner
 
+[![JSR](https://jsr.io/badges/@continuit/xmlscanner)](https://jsr.io/@continuit/xmlscanner)
 [![ci](https://github.com/ContinuIT-nl/xmlscanner/actions/workflows/ci.yml/badge.svg)](https://github.com/ContinuIT-nl/xmlscanner/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A fast XML parser / scanner written in Typescript
 
+- Small, fast, zero dependencies
+- Supports multiple runtimes (Node.js, Deno, Bun, browsers)
+- SAX based parser with DOM like event structure
+- Supports standard XML features (element names, attributes, text, comments, CDATA, processing instructions, xml entities). No support for DTDs.
+
 Given an XML string, the xml scanner will parse the XML and invoke the defined events on the specified paths.
+
+## Installation
+
+npm: `npx jsr add @continuit/xmlscanner`, deno: `deno add jsr:@continuit/xmlscanner`. For other platforms see [jsr.io](https://jsr.io/packages/@continuit/xmlscanner) for more information.
 
 ## Core concepts
 
@@ -32,7 +43,7 @@ When the whole tree structure is set up, the `xmlScanner(xml, events)` function 
 
 ## Code examples
 
-For the examples below, an example XML document is used [testfile.xml](./test/testfile.xml):
+For the examples below, an example XML document is used [testfile.xml](./test_data/testfile.xml):
 
 ```xml
 <company>

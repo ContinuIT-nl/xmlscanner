@@ -9,6 +9,8 @@ export const unquote = (value: string) => {
   return value;
 };
 
+const noEvents: XmlEvents = {};
+
 // Parse processing instruction or xml declaration. The characters <? are already validated.
 const parsePIorXmlDeclaration = (
   xml: string,
@@ -52,45 +54,45 @@ const parsePIorXmlDeclaration = (
 };
 
 const parseElement = (xml: string, start: number, events: XmlEvents) => {
-  // Opening tag or self closing tag
-  // Scan the name & extract.
-  const charCode = xml.charCodeAt(start + 1);
+  // Find tagName
+  let charCode = xml.charCodeAt(start + 1);
   if (!(validNameStartBits[charCode >> 5] & (1 << (charCode & 31)))) {
     throw new XmlParsingError('INVALID_ELEMENT_NAME', start);
   }
   let nameEnd = start + 2;
   for (;;) {
-    const charCode = xml.charCodeAt(nameEnd);
+    charCode = xml.charCodeAt(nameEnd);
     if (!(validNameNextBits[charCode >> 5] & (1 << (charCode & 31)))) break;
     nameEnd++;
   }
   const tagName = xml.slice(start + 1, nameEnd);
 
   // Once we have the name, check if we can find the events for the tag. If not, we use unknownElement.
-  const lEvents = events.children?.[tagName] ?? events.unknownElement ?? {};
+  const lEvents = events.children?.[tagName] ?? events.unknownElement ?? noEvents;
   lEvents.tagopen?.(tagName);
 
   // Attributes loop
-  let index = nameEnd;
+  let attrNameStart = nameEnd;
   for (;;) {
     // Find start of attribute name or end of the opening tag.
-    let attrNameStart = index;
-    while (
-      whitespaceBits[xml.charCodeAt(attrNameStart) >> 5] &
-      (1 << (xml.charCodeAt(attrNameStart) & 31))
-    ) attrNameStart++;
+    charCode = xml.charCodeAt(attrNameStart);
+    while (whitespaceBits[charCode >> 5] & (1 << (charCode & 31))) {
+      attrNameStart++;
+      charCode = xml.charCodeAt(attrNameStart);
+    }
 
     // End of open tag
-    if (xml.charCodeAt(attrNameStart) === 62) { // 62 = '>'
+    if (charCode === 62) { // 62 = '>'
       // content loop
       let contentStart = attrNameStart + 1;
-      // todo: check performance implications for creating another function for this
       for (;;) {
         // Scan for the next <. Everything before is text content.
         const contentEnd = xml.indexOf('<', contentStart);
         if (contentEnd === -1) {
           throw new XmlParsingError('NO_ENDTAG_FOUND', contentStart);
         }
+
+        // If there is text content, emit the text event.
         if (contentEnd > contentStart) {
           lEvents.text?.(unEntity(xml.slice(contentStart, contentEnd)));
         }
@@ -98,75 +100,67 @@ const parseElement = (xml: string, start: number, events: XmlEvents) => {
         // Is it a closing tag?
         const nextCode = xml.charCodeAt(contentEnd + 1);
         if (nextCode === 47) { // 47 = '/'
-          // Compare name with the name of the current element.
-          if (
-            tagName !==
-              xml.slice(contentEnd + 2, contentEnd + 2 + tagName.length)
-          ) {
+          // Name must match with the name of the current element.
+          if (tagName !== xml.slice(contentEnd + 2, contentEnd + 2 + tagName.length)) {
             throw new XmlParsingError('MISMATCHED_TAG', contentEnd);
           }
           // Close tag
           lEvents.tagclose?.(tagName);
+          // note: this is the only escape from the content loop.
           return contentEnd + 2 + tagName.length + 1;
         }
-
-        if (nextCode === 63) { // 63 = '?'
-          contentStart = parsePIorXmlDeclaration(xml, contentEnd, lEvents);
-        } else if (nextCode === 33) { // 33 = '!'
-          contentStart = parseCommentOrDocTypeOrCData(
-            xml,
-            contentEnd,
-            lEvents,
-            true,
-          );
-        } else {
-          contentStart = parseElement(xml, contentEnd, lEvents);
-        }
+        contentStart = nextCode === 63 /* ? */
+          ? parsePIorXmlDeclaration(xml, contentEnd, lEvents)
+          : nextCode === 33 /* ! */
+          ? parseCommentOrDocTypeOrCData(xml, contentEnd, lEvents, true)
+          : parseElement(xml, contentEnd, lEvents);
       }
     }
 
     // Self closing tag
-    if (xml[attrNameStart] === '/' && xml[attrNameStart + 1] === '>') {
+    if (charCode === 47 && xml.charCodeAt(attrNameStart + 1) === 62) { // 47 = '/', 62 = '>'
       lEvents.tagclose?.(tagName);
       return attrNameStart + 2;
     }
 
-    // Scan attribute name.
-    const charCode = xml.charCodeAt(attrNameStart);
+    // Attribute name.
     if (!(validNameStartBits[charCode >> 5] & (1 << (charCode & 31)))) {
       throw new XmlParsingError('INVALID_ATTRIBUTE_NAME', start);
     }
     let attrNameEnd = attrNameStart + 1;
     for (;;) {
-      const charCode = xml.charCodeAt(attrNameEnd);
+      charCode = xml.charCodeAt(attrNameEnd);
       if (!(validNameNextBits[charCode >> 5] & (1 << (charCode & 31)))) break;
       attrNameEnd++;
     }
-    const attrName = xml.slice(attrNameStart, attrNameEnd);
 
-    // Attribute value parsing
-    if (xml.charCodeAt(attrNameEnd) !== 61) {
+    // Attribute value
+    // equal sign
+    if (charCode !== 61) {
       throw new XmlParsingError('UNEXPECTED_TOKEN', attrNameEnd); // 61 = '='
     }
-    const quoteChar = xml.charCodeAt(attrNameEnd + 1);
-    if (!(quoteChar === 34 || quoteChar === 39)) {
+    // quote character
+    charCode = xml.charCodeAt(attrNameEnd + 1);
+    if (!(charCode === 34 || charCode === 39)) {
       throw new XmlParsingError('UNEXPECTED_TOKEN', attrNameEnd + 1); // 34 = '"', 39 = "'"
     }
-    const attrValueEnd = xml.indexOf(
-      quoteChar === 34 ? '"' : "'",
-      attrNameEnd + 2,
-    );
+    // attribute value end
+    const attrValueEnd = xml.indexOf(charCode === 34 ? '"' : "'", attrNameEnd + 2);
     if (attrValueEnd === -1) {
       throw new XmlParsingError('ATTRIBUTE_VALUE_NOT_CLOSED', attrNameEnd + 2);
     }
-    const attrValue = xml.slice(attrNameEnd + 2, attrValueEnd);
 
-    // Emit attribute event
-    lEvents.allAttributes?.(attrName, attrValue);
-    lEvents.attributes?.[attrName]?.(unEntity(attrValue));
+    // Emit attribute events
+    const attrName = xml.slice(attrNameStart, attrNameEnd);
+    const attrEvent = lEvents.attributes?.[attrName];
+    if (lEvents.allAttributes || attrEvent) {
+      const attrValue = unEntity(xml.slice(attrNameEnd + 2, attrValueEnd));
+      lEvents.allAttributes?.(attrName, attrValue);
+      attrEvent?.(attrValue);
+    }
 
     // Next attributes
-    index = attrValueEnd + 1;
+    attrNameStart = attrValueEnd + 1;
   }
 };
 
