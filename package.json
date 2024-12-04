@@ -1,6 +1,6 @@
 {
   "name": "@continuit/xmlparser",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "A fast XML scanner/parser with no dependencies. Given an XML string, the xml scanner will parse the XML and invoke the defined events on the specified paths.",
   "main": "dist/index.js",
   "scripts": {
@@ -33,5 +33,6 @@
   ],
   "devDependencies": {
     "typescript": "^5.7.2"
-  }
+  },
+  "types": "./dist/index.d.ts"
 }
