@@ -15,7 +15,12 @@ Given an XML string, the xml scanner will parse the XML and invoke the defined e
 
 ## Installation
 
-npm: `npx jsr add @continuit/xmlscanner`, deno: `deno add jsr:@continuit/xmlscanner`. For other platforms see [jsr.io](https://jsr.io/packages/@continuit/xmlscanner) for more information.
+| Platform   | Command                                      |
+|------------|----------------------------------------------|
+| npm        | `npm install @continuit/xmlscanner`          |
+| deno       | `deno add jsr:@continuit/xmlscanner`         |
+
+For other platforms see [jsr.io](https://jsr.io/packages/@continuit/xmlscanner) for more information.
 
 ## Core concepts
 
