@@ -1,0 +1,38 @@
+{
+  "name": "@continuit/xmlparser",
+  "version": "0.1.0",
+  "description": "A fast XML scanner/parser with no dependencies. Given an XML string, the xml scanner will parse the XML and invoke the defined events on the specified paths.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-dist": "npx esbuild --bundle src/mod.ts --outfile=dist/index.js --minify --sourcemap",
+    "build-types": "tsc --strict --outFile dist/index.d.ts --lib es2024 --target es2024 --allowImportingTsExtensions --emitDeclarationOnly --declaration ./src/mod.ts",
+    "build": "npm run build-dist && npm run build-types",
+    "publish": "npm publish --access public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ContinuIT-nl/xmlscanner.git"
+  },
+  "keywords": [
+    "xml",
+    "parser"
+  ],
+  "author": "ContinuIT BV, R.A. Hornstra",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ContinuIT-nl/xmlscanner/issues"
+  },
+  "homepage": "https://github.com/ContinuIT-nl/xmlscanner#readme",
+  "files": [
+    "dist/index.js",
+    "dist/index.d.ts",
+    "dist/index.js.map",
+    "LICENSE",
+    "README.md"
+  ],
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "types": "./dist/index.d.ts"
+}

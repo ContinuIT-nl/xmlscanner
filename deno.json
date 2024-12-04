@@ -1,6 +1,6 @@
 {
   "name": "@continuit/xmlscanner",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "A fast, zero dependencies, SAX based XML parser for Deno, Node.js, Bun and browsers.",
   "repository": "https://github.com/ContinuIT-nl/xmlscanner",
   "license": "MIT",

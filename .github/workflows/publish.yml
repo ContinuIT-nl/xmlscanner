@@ -23,3 +23,17 @@ jobs:
 
       - name: Publish package
         run: deno publish
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install typescript
+        run: npm install
+
+      - name: Build npm package
+        run: npm run build
+
+      - name: Publish npm package
+        run: npm run publish
