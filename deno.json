@@ -6,6 +6,8 @@
   "license": "MIT",
   "author": "ContinuIT BV, The Netherlands",
   "tasks": {
+    "test": "deno test -RSW --coverage --clean --junit-path test_results/junit.xml  && deno coverage --lcov --output=test_results/cov.lcov",
+    "testReport": "deno task test && deno run -RW ./testReport/testreport.ts",
     "testucd": "deno run -A ./performance_test/test_ucd.ts",
     "build-npm": "npx esbuild --bundle src/mod.ts --outfile=dist/index.js --minify --sourcemap",
     "publish-npm": "npm publish --access public"

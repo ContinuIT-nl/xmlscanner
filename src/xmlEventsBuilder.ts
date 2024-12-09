@@ -27,17 +27,18 @@ export const addElement = (
  * Add an attribute event to the trie structure.
  * @param events - The trie structure node to add the attribute event to.
  * @param elementPath - The path to the element an attribute event needs to be added to.
+ *                      If an empty string or null is provided, the attribute event will be added to events itself.
  * @param attributeName - The name of the attribute.
  * @param attributeEvent - The event to add.
  * @returns The trie structure node with the new attribute event added.
  */
 export const addAttributeEvent = (
   events: XmlEvents,
-  elementPath: string,
+  elementPath: string | null,
   attributeName: string,
   attributeEvent: AttributeEvent,
 ): XmlEvents => {
-  const elementEvents = addElement(events, elementPath);
+  const elementEvents = elementPath ? addElement(events, elementPath) : events;
   elementEvents.attributes ??= {};
   elementEvents.attributes[attributeName] = attributeEvent;
   return elementEvents;

@@ -1,6 +1,7 @@
 # xmlscanner
 
 [![JSR](https://jsr.io/badges/@continuit/xmlscanner)](https://jsr.io/@continuit/xmlscanner)
+[![NPM](https://img.shields.io/npm/v/@continuit/xmlscanner?logo=npm)](https://www.npmjs.com/package/@continuit/xmlparser)
 [![ci](https://github.com/ContinuIT-nl/xmlscanner/actions/workflows/ci.yml/badge.svg)](https://github.com/ContinuIT-nl/xmlscanner/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -179,3 +180,7 @@ No existing solution was both performant and easy to use (and not running out of
 ## License
 
 This project is licensed under the MIT license. See the [LICENSE](./LICENSE) file for details.
+
+## Code quality
+
+The code quality is measured using unit tests and code coverage. See the [Test report](./test_results/test_results.md) for more information.

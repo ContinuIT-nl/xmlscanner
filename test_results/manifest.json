@@ -1,0 +1,11 @@
+{
+  "source": "./test_results/testreport.json",
+  "codeCoverageLinesPercentage": "100.0%",
+  "codeCoverageBranchesPercentage": "100.0%",
+  "tests": "30",
+  "testsPassed": "30",
+  "testsFailed": "0",
+  "testsSkipped": "0",
+  "testPercentage": "100.0%",
+  "testHash": "TODO"
+}

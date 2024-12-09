@@ -130,3 +130,6 @@ dist
 .pnp.*
 
 test_data/ucd.all.flat.xml
+
+test_results/*.lcov
+test_results/junit*.xml
