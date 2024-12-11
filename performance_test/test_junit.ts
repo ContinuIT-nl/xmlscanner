@@ -1,4 +1,4 @@
-import { createJUnitParser, type TestCaseState, type TestSuites } from './junit_parser.ts';
+import { createJUnitParser } from './junit_parser.ts';
 
 async function test_xmlscanner(xmlFilename: string) {
   const xmlBytes = await Deno.readFile(xmlFilename);
