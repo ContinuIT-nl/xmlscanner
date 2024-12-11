@@ -1,6 +1,7 @@
 # xmlscanner
 
 [![JSR](https://jsr.io/badges/@continuit/xmlscanner)](https://jsr.io/@continuit/xmlscanner)
+[![NPM](https://img.shields.io/npm/v/@continuit/xmlscanner?logo=npm)](https://www.npmjs.com/package/@continuit/xmlparser)
 [![ci](https://github.com/ContinuIT-nl/xmlscanner/actions/workflows/ci.yml/badge.svg)](https://github.com/ContinuIT-nl/xmlscanner/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -140,10 +141,9 @@ Care has been taken to ensure that the library performs well. After trying out d
 In order to allow for events to be defined on different paths a tree structure was used.
 The tree is traversed while scanning the XML string so when events need to be invoked the right node is already at hand.
 Since all events are defined on the nodes the memory usage is minimal.
-While scanning the XML document the active node in the tree is tracked so event invoking is also very fast.
 
 No tokens are created while scanning, just scanning the XML string.
-When an event is specified on a path that need to pass some content (like text and attribute events) only then is the content extracted and entities unescaped.
+When an event is specified on a path that need to pass some content (like text and attribute events) only then is the content extracted and entities unescaped. Element and Attribute names are converted to strings for lookup of events / tree traversal.
 Since V8 and the like allow for allocation of substrings very fast there is only a minimal penalty in terms of performance, especially if there are no entities to unescape.
 This is the reason strings are used as the source of the XML document instead of an `UInt8Array`.
 
@@ -175,6 +175,10 @@ There are already a number of XML parsers available for Typescript, so why build
 
 The main reason for this parser is the need for a fast XML parser for XML files wrapped inside zip files varying in size from 30MB to 200MB.
 No existing solution was both performant and easy to use (and not running out of memory).
+
+## Code quality
+
+The code quality is measured using unit tests and code coverage. See the [Test report](./test_results/test_results.md) for more information.
 
 ## License
 

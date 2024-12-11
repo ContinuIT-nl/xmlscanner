@@ -30,7 +30,7 @@ function getMemoryExtra() {
   return extra;
 }
 
-async function perform_tests() {
+export async function perform_tests() {
   // Set process priority to highest prio to get more reproducible results
   setPriority(-20);
   // Load the XML file into memory
@@ -118,6 +118,8 @@ function perform_libs_xml_test(xmlFile: string) {
   return { source: '@libs/xml', codePoints, duration_ms, memUsage_MB: getMemoryExtra() / 1024 / 1024 };
 }
 
-await perform_tests();
+if (import.meta.main) {
+  await perform_tests();
+}
 
 // todo: also add 10MB test and 1MB test

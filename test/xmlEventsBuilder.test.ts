@@ -11,9 +11,13 @@ Deno.test('xmlEventBuilder-base', () => {
   addAttributeEvent(events, 'root', 'value', (value) => {
     result.push(`Attribute [value] [${value}]`);
   });
-  addElement(events, 'root/child').text = (text) => {
+  const childEvents = addElement(events, 'root/child');
+  childEvents.text = (text) => {
     result.push(`Text [root/child] [${text}]`);
   };
+  addAttributeEvent(childEvents, null, 'childvalue', (value) => {
+    result.push(`Attribute [childvalue] [${value}]`);
+  });
   addElement(events, 'root/sibling').tagopen = () => {
     result.push('Tagopen [root/sibling]');
   };
@@ -21,12 +25,13 @@ Deno.test('xmlEventBuilder-base', () => {
     result.push('Tagclose [root/sibling]');
   };
 
-  const xml = '<root value="1"><child>text</child><sibling  /><sibling/></root>';
+  const xml = '<root value="1"><child childvalue="2">text</child><sibling  /><sibling/></root>';
   xmlScanner(xml, events);
 
   const expected = [
     'Tagopen [root]',
     'Attribute [value] [1]',
+    'Attribute [childvalue] [2]',
     'Text [root/child] [text]',
     'Tagopen [root/sibling]',
     'Tagclose [root/sibling]',

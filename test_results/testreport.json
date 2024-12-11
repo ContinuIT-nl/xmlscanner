@@ -1,0 +1,10 @@
+{
+  "test_results": {
+    "junit": ["test_results/junit.xml"],
+    "coverage": ["test_results/cov.lcov"]
+  },
+  "output": {
+    "markdown": "test_results/test_results.md",
+    "manifest": "test_results/manifest.json"
+  }
+}
