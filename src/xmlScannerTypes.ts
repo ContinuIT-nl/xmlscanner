@@ -95,15 +95,15 @@ export type XmlEvents = {
   /** Event handler for DOCTYPE declarations. */
   docType?: XmlDocTypeEvent;
   /** Event handler for unknown attributes. */
-  allAttributes?: XmlUnknownAttributeEvent;
+  unknownAttribute?: XmlUnknownAttributeEvent;
   /** Event handlers for unknown elements. */
   unknownElement?: XmlEvents;
   /**
    * Child elements, where the key is the element name and the value is the corresponding XmlEvents.
    */
-  children?: { [key: string]: XmlEvents };
+  children?: Map<string, XmlEvents>;
   /**
    * Attribute handlers, where the key is the attribute name and the value is the corresponding AttributeEvent.
    */
-  attributes?: { [key: string]: AttributeEvent };
+  attributes?: Map<string, AttributeEvent>;
 };

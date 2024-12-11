@@ -14,7 +14,7 @@ Deno.test('xmlScanner-events', () => {
     comment: (text: string) => result.push(`comment [${text}]`),
     xmlDeclaration: (version: string, encoding: string, standalone: string) =>
       result.push(`xmlDeclaration [${version}] [${encoding}] [${standalone}]`),
-    allAttributes: (name: string, value: string) => result.push(`attribute [${name}] [${value}]`),
+    unknownAttribute: (name: string, value: string) => result.push(`attribute [${name}] [${value}]`),
   };
   events.unknownElement = events;
 

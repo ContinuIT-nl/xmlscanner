@@ -68,7 +68,7 @@ const parseElement = (xml: string, start: number, events: XmlEvents) => {
   const tagName = xml.slice(start + 1, nameEnd);
 
   // Once we have the name, check if we can find the events for the tag. If not, we use unknownElement.
-  const lEvents = events.children?.[tagName] ?? events.unknownElement ?? noEvents;
+  const lEvents = events.children?.get(tagName) ?? events.unknownElement ?? noEvents;
   lEvents.tagopen?.(tagName);
 
   // Attributes loop
@@ -152,11 +152,11 @@ const parseElement = (xml: string, start: number, events: XmlEvents) => {
 
     // Emit attribute events
     const attrName = xml.slice(attrNameStart, attrNameEnd);
-    const attrEvent = lEvents.attributes?.[attrName];
-    if (lEvents.allAttributes || attrEvent) {
-      const attrValue = unEntity(xml.slice(attrNameEnd + 2, attrValueEnd));
-      lEvents.allAttributes?.(attrName, attrValue);
-      attrEvent?.(attrValue);
+    const attrEvent = lEvents.attributes?.get(attrName);
+    if (attrEvent) {
+      attrEvent(unEntity(xml.slice(attrNameEnd + 2, attrValueEnd)));
+    } else if (lEvents.unknownAttribute) {
+      lEvents.unknownAttribute(attrName, unEntity(xml.slice(attrNameEnd + 2, attrValueEnd)));
     }
 
     // Next attributes

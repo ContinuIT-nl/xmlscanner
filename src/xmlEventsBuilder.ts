@@ -17,8 +17,13 @@ export const addElement = (
   const pathArray = parseElementPath(elementPath);
   let current = events;
   for (const element of pathArray) {
-    current.children ??= {};
-    current = current.children[element] ??= {};
+    current.children ??= new Map();
+    let next = current.children.get(element);
+    if (!next) {
+      next = emptyXmlEvents();
+      current.children.set(element, next);
+    }
+    current = next;
   }
   return current;
 };
@@ -39,7 +44,7 @@ export const addAttributeEvent = (
   attributeEvent: AttributeEvent,
 ): XmlEvents => {
   const elementEvents = elementPath ? addElement(events, elementPath) : events;
-  elementEvents.attributes ??= {};
-  elementEvents.attributes[attributeName] = attributeEvent;
+  elementEvents.attributes ??= new Map();
+  elementEvents.attributes.set(attributeName, attributeEvent);
   return elementEvents;
 };

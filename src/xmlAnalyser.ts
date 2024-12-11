@@ -35,7 +35,7 @@ export const xmlAnalyser = (xml: string): string[] => {
     comment: () => {
       result.add(path.at(-1) + '#comment');
     },
-    allAttributes: (name: string, _value: string) => {
+    unknownAttribute: (name: string, _value: string) => {
       result.add(path.at(-1) + '@' + name);
     },
   };
